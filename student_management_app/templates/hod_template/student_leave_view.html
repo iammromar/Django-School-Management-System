@@ -1,0 +1,81 @@
+{% extends 'hod_template/base_template.html' %}
+
+{% block page_title %}
+    Tərk Etmək Üçün Müraciət Edən Tələbələr
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card card-primary">
+                        <div class="card-header">
+                            <h3 class="card-title">Tərk Etmək Üçün Müraciət Edən Tələbələr</h3>
+                        </div>
+                        <!-- /.card-header -->
+
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Tələbə ID</th>
+                                    <th>Tələbənin Adı</th>
+                                    <th>Tərk Etmə Tarixi</th>
+                                    <th>Tərk Etmə Mesajı</th>
+                                    <th>Müraciət Etdi</th>
+                                    <th>İcra Et</th>
+                                </tr>
+                                </thead>
+
+                                {% for leave in leaves %}
+                                <tbody>
+                                <tr>
+                                    <td>{{ leave.id }}</td>
+                                    <td>{{ leave.student_id.admin.id }}</td>
+                                    <td>{{ leave.student_id.admin.first_name }} {{ feedback.student_id.admin.last_name }}</td> 
+                                    <td>{{ leave.leave_date }}</td>
+                                    <td>{{ leave.leave_message }}</td>
+                                    <td>{{ leave.created_at }}</td>
+                                    <td>
+                                        {% if leave.leave_status == 0 %}
+                                            <a href="{% url 'student_leave_approve' leave_id=leave.id %}" class="btn btn-success">Təsdiqlə</a>
+                                            <a href="{% url 'student_leave_reject' leave_id=leave.id %}" class="btn btn-danger">Rədd Et</a>
+                                        {% elif leave.leave_status == 1 %}
+                                            <button class="btn btn-warning" disabled="disabled">Təsdqiləndi</button>
+                                        {% else %}
+                                            <button class="btn btn-danger" disabled="disabled">Rədd Edildi</button>
+                                        {% endif %}
+                                        
+                                    </td>
+                                </tr>
+                                </tbody>
+                                {% endfor %}
+
+                            </table>
+                        </div>
+                    
+                    </div>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+      
+
+  {% endblock main_content %}
+
+  {% comment %} Custom JS to Identify the Reply and Post Reply {% endcomment %}
+
+  {% block custom_js %}
+
+  {% endblock custom_js %}

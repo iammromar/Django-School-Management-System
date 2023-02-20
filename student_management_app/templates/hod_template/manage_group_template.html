@@ -1,0 +1,98 @@
+{% extends 'hod_template/base_template.html' %}
+
+{% block page_title %}
+    Qrupları İdarə Et
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            <a class="btn btn-primary" href="{% url 'add_group' %}" role="button">+ Qrup Artır</a> <br/>&nbsp;
+
+            {% if messages %}
+                                <div class="form-group">
+                                <div class="col-12">
+                                    {% for message in messages %}
+                                    {% if message.tags == "error" %}
+                                        <div class="alert alert-danger alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% elif message.tags == "success" %}
+                                        <div class="alert alert-success alert-dismissible fade show" role="alert" style="margin-top: 10px;">
+                                        {{ message }}
+                                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                            <span aria-hidden="true">&times;</span>
+                                        </button>
+                                        </div>
+                                    {% endif %}
+                                    {% endfor %}
+                                </div>
+                                </div>
+                                {% endif %}
+
+            <div class="row">
+                <div class="col-md-12">
+                    <!-- general form elements -->
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 class="card-title">Qrup Detalları</h3>
+
+                            <div class="card-tools">
+                                <form class="form-inline" method="GET", action="/search_group">
+                                    {% if not searched %}
+                                      <input class="form-control mr-sm-2" type="search" placeholder="Qrup axtar..." aria-label="Search" name="search">
+                                    {% else %}
+                                      <input class="form-control mr-sm-2" type="search" placeholder="{{searched}}" aria-label="Search" name="search">
+                                    {% endif %}
+                                      
+                                    <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Axtar</button>
+                                </form>
+                            </div>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body table-responsive p-0">
+                            <table class="table table-hover text-nowrap">
+                            <thead>
+                                <tr>
+                                <th>ID</th>
+                                <th>Qrup Adı</th>
+                                <th>Yaradılma Tarixi At</th>
+                                <th>Dəyişdirilmə Tarixi</th>
+                                <th>İcra Et</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for group in groups %}
+                                <tr>
+                                <td>{{ group.id }}</td>
+                                <td>{{ group.group_name }}</td>
+                                <td>{{ group.created_at }}</td>
+                                <td>{{ group.updated_at }}</td>
+                                <td>
+                                    <a href="{% url 'edit_group' group.id %}" class="btn btn-success">Dəyiş</a> 
+                                    <a href="{% url 'delete_group' group.id %}" class="btn btn-danger">Sil</a>
+                                </td>
+                                </tr>
+                                {% endfor %}
+                                
+                            </tbody>
+                            </table>
+                        </div>
+                        <!-- /.card-body -->
+                        </div>
+                    <!-- /.card -->
+
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}

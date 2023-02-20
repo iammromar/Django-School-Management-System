@@ -1,0 +1,302 @@
+{% extends 'hod_template/base_template.html' %}
+
+{% block main_content %}
+
+{% load static %}
+{% load mathfilters %}
+
+<style type="text/css">
+  table {
+  font-family: arial, sans-serif;
+  border-collapse: collapse;
+  width: 100%;
+}
+
+td, th {
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+}
+
+table.center {
+  margin-left: auto; 
+  margin-right: auto;
+}
+
+tr:nth-child(even) {
+  background-color: #dddddd;
+}
+
+</style>
+
+<section class="content">
+        <div class="container-fluid">
+          <!-- Small boxes (Stat box) -->
+          <div class="row">
+            <div class="col-lg-3 col-6">
+              <!-- small box -->
+              <div class="small-box bg-info">
+                <div class="inner">
+                  <h3>{{ all_student_count }}</h3>
+
+                  <p>Ümumi Tələbələr</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-stats-bars"></i>
+                </div>
+                <a href="{% url 'manage_student' %}" class="small-box-footer">Daha çox<i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+              <!-- small box -->
+              <div class="small-box bg-danger">
+                <div class="inner">
+                  <h3>{{ staff_count }}</h3>
+
+                  <p>Ümumi Heyət</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-stats-bars"></i>
+                </div>
+                <a href="{% url 'manage_staff' %}" class="small-box-footer">Daha çox <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+            </div>
+            <!-- ./col -->
+            
+            <div class="col-lg-3 col-6">
+              <!-- small box -->
+              <div class="small-box bg-warning">
+                <div class="inner">
+                  <h3>{{ group_count }}</h3>
+
+                  <p>Ümumi Qruplar</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-stats-bars"></i>
+                </div>
+                <a href="{% url 'manage_group' %}" class="small-box-footer">Daha çox <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+            </div>
+            <!-- ./col -->
+            <div class="col-lg-3 col-6">
+              <!-- small box -->
+              <div class="small-box bg-success">
+                <div class="inner">
+                  <h3>{{ subject_count }}</h3>
+
+                  <p>Ümumi Fənnlər</p>
+                </div>
+                <div class="icon">
+                  <i class="ion ion-stats-bars"></i>
+                </div>
+                <a href="{% url 'manage_subject' %}" class="small-box-footer">Daha çox <i class="fas fa-arrow-circle-right"></i></a>
+              </div>
+            </div>
+            <!-- ./col -->
+            
+          </div>
+          <!-- /.row -->
+          <div class="row">
+            <div class="col-lg-6">
+              <!-- PIE CHART -->
+              <div class="card card-danger">
+                <div class="card-header">
+                  <h3 class="card-title">Tələbə və Heyət Qrafiki</h3>
+
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+            </div>
+
+            <div class="col-lg-6">
+              <!-- DONUT CHART -->
+              <div class="card card-danger">
+                <div class="card-header">
+                  <h3 class="card-title">Qruplar Üzrə Ümumi Tələbələr</h3>
+
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <canvas id="pieChart3" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+                <!-- /.card-body -->
+              </div>
+              <!-- /.card -->
+              
+            </div>
+          </div>
+
+          <div class="row">
+
+            <div class="col-lg-6">
+              <!-- PIE CHART -->
+              <div class="card card-info">
+                <div class="card-header">
+                  <h3 class="card-title">Hər Heyətin Üzvünun Qrupları</h3>
+
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <canvas id="pieChart2" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+                <!-- /.card-body -->
+                </div>
+            </div>
+
+            <div class="col-lg-6">
+              <!-- PIE CHART -->
+              <div class="card card-info">
+                <div class="card-header">
+                  <h3 class="card-title">Fənlərə Görə Tələbə Sayı</h3>
+
+                  <div class="card-tools">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                  </div>
+                </div>
+                <div class="card-body">
+                  <canvas id="pieChart4" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                </div>
+                <!-- /.card-body -->
+            </div>
+            </div>
+          </div>
+
+
+      
+          
+
+
+          <div class="text-center">
+            <h3 class="text-center">Fənlər Üzrə Aylıq Ümumi Qazanc Cədvəli</h3>
+          
+              <table class="center">
+           <tr>
+                  <th>Fənn</th>
+                  <th>Ümumi Qazanc</th>
+                </tr>
+                {% for subject in subject_all %}
+                <tr>
+                  <td>{{subject.subject_name}}</td>
+                  <td>{{subject.price|mul:subject.students_set.all.count}} AZN</td>
+                </tr>
+              {% endfor %}
+              </table>
+
+          </div>
+        
+
+        </div><!-- /.container-fluid -->
+        
+      </section>
+
+  {% endblock main_content %}
+
+  {% block custom_js %}
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script>
+
+    var config = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: {{ student_vs_staff|safe }},
+          backgroundColor: [
+            '#a832a8', '#32a852'
+          ],
+          label: 'Tələbə & Heyət'
+        }],
+        labels: {{ student_vs_staff_lables|safe }}
+      },
+      options: {
+        responsive: true
+      }
+    };
+
+
+    var config1 = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: {{ group_count_list|safe }},
+          backgroundColor:
+            {{staff_name_colors|safe}}
+          ,
+          label: 'Qrup & Heyət'
+        }],
+        labels: {{ staff_name_group_list|safe }}
+      },
+      options: {
+        responsive: true
+      }
+    };
+
+    var config2 = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: {{ student_count_list_in_group|safe }},
+          backgroundColor:
+            {{group_colors|safe}}
+          ,
+          label: 'Qrup & Tələbə'
+        }],
+        labels: {{ group_name_list|safe }}
+      },
+      options: {
+        responsive: true
+      }
+    };
+
+    var config3 = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: {{ student_count_list_in_subject|safe }},
+          backgroundColor:
+            {{subject_colors|safe}}
+          ,
+          label: 'Fənn & Tələbə'
+        }],
+        labels: {{ subject_name_list|safe }}
+      },
+      options: {
+        responsive: true
+      }
+    };
+
+    window.onload = function() {
+      var ctx1 = document.getElementById('pieChart2').getContext('2d');
+      var ctx = document.getElementById('pieChart').getContext('2d');
+      var ctx2 = document.getElementById('pieChart3').getContext('2d');
+      var ctx3 = document.getElementById('pieChart4').getContext('2d');
+      window.myPie = new Chart(ctx, config);
+      window.myPie = new Chart(ctx1, config1);
+      window.myPie = new Chart(ctx2, config2);
+      window.myPie = new Chart(ctx3, config3);
+    };
+
+  </script>
+
+
+  {% endblock custom_js %}

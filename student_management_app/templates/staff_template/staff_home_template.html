@@ -1,0 +1,215 @@
+{% extends 'staff_template/base_template.html' %}
+
+{% block page_title %}
+    Heyət Ana Səhifə
+{% endblock page_title %}
+
+{% block main_content %}
+
+{% load static %}
+
+<section class="content">
+        <div class="container-fluid">
+
+            {% comment %} Boxes Section Starts {% endcomment %}
+            <div class="row">
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-info">
+                    <div class="inner">
+                        <h3>{{ students_count }}</h3>
+
+                        <p>Mənim tələbələrim</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                    <a href="{% url 'staff_take_attendance' %}" class="small-box-footer">Daha çox <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-success">
+                    <div class="inner">
+                        <h3>{{ attendance_count }}</h3>
+
+                        <p>Ümumi qeydiyyat</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                    <a href="{% url 'staff_take_attendance' %}" class="small-box-footer">Daha çox <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-warning">
+                    <div class="inner">
+                        <h3>{{ leave_count }}</h3>
+
+                        <p>Ümumi tərk etmə</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-stats-bars"></i>
+                    </div>
+                    <a href="{% url 'staff_apply_leave' %}" class="small-box-footer">Daha çox <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+                <div class="col-lg-3 col-6">
+                    <!-- small box -->
+                    <div class="small-box bg-danger">
+                    <div class="inner">
+                        <h3>{{ subject_count }}</h3>
+
+                        <p>Ümumi fənlər</p>
+                    </div>
+                    <div class="icon">
+                        <i class="ion ion-pie-graph"></i>
+                    </div>
+                    <a href="#" class="small-box-footer">MDaha çox <i class="fas fa-arrow-circle-right"></i></a>
+                    </div>
+                </div>
+                <!-- ./col -->
+                </div>
+            {% comment %} Boxes Section Ends {% endcomment %}
+
+            <div class="row">
+                <div class="col-lg-6">
+                    <!-- PIE CHART -->
+                    <div class="card card-danger">
+                    <div class="card-header">
+                        <h3 class="card-title">Tərk Etmə & Qeydiyyat Qrafiki</h3>
+
+                        <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="pieChart" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                    </div>
+                    <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+
+                <div class="col-lg-6">
+                    <!-- PIE CHART -->
+                    <div class="card card-success">
+                    <div class="card-header">
+                        <h3 class="card-title">Qrup Qeydiyyat Qrafiki</h3>
+
+                        <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <div class="chart">
+                        <canvas id="pieChart2" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 100%;"></canvas>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-lg-12">
+                    <!-- PIE CHART -->
+                    <div class="card card-info">
+                    <div class="card-header">
+                        <h3 class="card-title">Tələbə Qeydiyyat Datası</h3>
+
+                        <div class="card-tools">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove"><i class="fas fa-times"></i></button>
+                        </div>
+                    </div>
+
+                    <div class="card-body">
+                        <div class="chart">
+                        <canvas id="pieChart3" style="min-height: 250px; height: 250px; max-height: 250px; max-width: 50%;"></canvas>
+                        </div>
+                    </div>
+                    <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                </div>
+            </div>
+
+        </div><!-- /.container-fluid -->
+      </section>
+
+  {% endblock main_content %}
+
+  {% block custom_js %}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@2.9.3/dist/Chart.min.js"></script>
+  <script>
+
+    var config = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: {{ leave_attendance_data|safe }},
+          backgroundColor: [
+            '#a832a8', '#32a852'
+          ],
+          label: 'Leave & Attendance'
+        }],
+        labels: ["Qeydiyyat", "Tərk etmə"]
+      },
+      options: {
+        responsive: true
+      }
+    };
+
+    var config1 = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: {{ attendance_list|safe }},
+          backgroundColor: {{group_name_colors|safe}},
+          label: 'Group Attendance Chart'
+        }],
+        labels: {{group_name_list|safe}}
+      },
+      options: {
+        responsive: true
+      }
+    };
+    
+    
+    var config2 = {
+      type: 'pie',
+      data: {
+        datasets: [{
+          data: {{ attendance_list|safe }},
+          backgroundColor: ['#f2eb0f', '#27baae'],
+          label: 'Group Attendance Chart'
+        }],
+        labels: ["İştirak edib", "İştirak etməyib"]
+      },
+      options: {
+        responsive: true
+      }
+    };
+
+    window.onload = function() {
+      var ctx = document.getElementById('pieChart').getContext('2d');
+      window.myPie = new Chart(ctx, config);
+      var ctx1 = document.getElementById('pieChart2').getContext('2d');
+      window.myPie = new Chart(ctx1, config1);
+      var ctx2 = document.getElementById('pieChart3').getContext('2d');
+      window.myPie = new Chart(ctx2, config2);
+    };
+
+    </script>
+  {% endblock custom_js %}
